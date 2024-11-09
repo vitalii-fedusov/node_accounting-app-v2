@@ -1,8 +1,12 @@
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 
 const users = [];
 
-let maxId = 0;
+let maxId = 100;
+
+function clearUsers() {
+  users.length = 0;
+}
 
 function generateId() {
   maxId++;
@@ -19,7 +23,7 @@ function getById(id) {
 }
 
 function create(name) {
-  const user = { id: uuidv4(), name };
+  const user = { id: generateId(), name };
 
   users.push(user);
 
@@ -38,7 +42,7 @@ function deleteById(id) {
   return deletedUser;
 }
 
-function update({ id, name }) {
+function update(id, name) {
   const usertoUpdate = users.find((user) => user.id === id);
 
   if (!usertoUpdate) {
@@ -54,4 +58,5 @@ module.exports = {
   create,
   deleteById,
   update,
+  clearUsers,
 };
