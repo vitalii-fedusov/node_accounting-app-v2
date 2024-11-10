@@ -6,9 +6,11 @@ function clearExpenses() {
   expenses.length = 0;
 }
 
-function getAll(userId, categories, from, to) {
+function getAll(query) {
+  const { userId, categories, from, to } = query;
+
   return expenses.filter((expense) => {
-    if (userId && expense.id !== userId) {
+    if (userId && expense.userId !== +userId) {
       return false;
     }
 
@@ -23,16 +25,16 @@ function getAll(userId, categories, from, to) {
     if (
       categories &&
       !Array.isArray(categories) &&
-      !categories === expense.category
+      categories !== expense.category
     ) {
       return false;
     }
 
-    if (from && new Date(from) > new Date(expense.spentAt)) {
+    if (from && from > expense.spentAt) {
       return false;
     }
 
-    if (to && new Date(to) < new Date(expense.spentAt)) {
+    if (to && to < expense.spentAt) {
       return false;
     }
 
@@ -44,15 +46,10 @@ function getById(id) {
   return expenses.find((expense) => expense.id === id);
 }
 
-function create(userId, spentAt, title, amount, category, note) {
+function create(params) {
   const expense = {
     id: generateId(),
-    userId,
-    spentAt,
-    title,
-    amount,
-    category,
-    note,
+    ...params,
   };
 
   expenses.push(expense);
@@ -79,7 +76,7 @@ function update(id, params) {
     return;
   }
 
-  return Object.assign(expensetoUpdate, ...params);
+  return Object.assign(expensetoUpdate, params);
 }
 
 module.exports = {

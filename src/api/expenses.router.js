@@ -5,8 +5,7 @@ const usersService = require('../services/users.service');
 const expensesRouter = Router();
 
 expensesRouter.get('/', async (req, res) => {
-  const { userId, categories, from, to } = req.query;
-  const expenses = await expensesService.getAll(userId, categories, from, to);
+  const expenses = await expensesService.getAll(req.query);
 
   res.json(expenses);
 });
@@ -23,24 +22,11 @@ expensesRouter.get('/:id', async (req, res) => {
 });
 
 expensesRouter.post('/', async (req, res) => {
-  const { userId, spentAt, title, amount, category, note } = req.body;
-
-  if (!userId || !spentAt || !title || !amount || !category) {
+  if (!usersService.getById(Number(req.body.userId))) {
     return res.sendStatus(400);
   }
 
-  if (!usersService.getById(userId)) {
-    return res.sendStatus(400);
-  }
-
-  const expense = await expensesService.create(
-    userId,
-    spentAt,
-    title,
-    amount,
-    category,
-    note,
-  );
+  const expense = await expensesService.create(req.body);
 
   res.status(201).send(expense);
 });
