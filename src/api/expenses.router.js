@@ -52,7 +52,7 @@ expensesRouter.patch('/:id', async (req, res) => {
     return res.sendStatus(404);
   }
 
-  const updatedExpense = await usersService.update(id, req.body);
+  const updatedExpense = await expensesService.update(id, req.body);
 
   res.json(updatedExpense);
 });
