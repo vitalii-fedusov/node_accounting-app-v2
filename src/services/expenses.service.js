@@ -1,17 +1,59 @@
-const { v4: uuidv4 } = require('uuid');
+const { generateId } = require('../utils/generateId');
 
 const expenses = [];
 
-function getAll() {
-  return expenses;
+function clearExpenses() {
+  expenses.length = 0;
+}
+
+function getAll(userId, categories, from, to) {
+  return expenses.filter((expense) => {
+    if (userId && expense.id !== userId) {
+      return false;
+    }
+
+    if (
+      categories &&
+      Array.isArray(categories) &&
+      !categories.includes(expense.category)
+    ) {
+      return false;
+    }
+
+    if (
+      categories &&
+      !Array.isArray(categories) &&
+      !categories === expense.category
+    ) {
+      return false;
+    }
+
+    if (from && new Date(from) > new Date(expense.spentAt)) {
+      return false;
+    }
+
+    if (to && new Date(to) < new Date(expense.spentAt)) {
+      return false;
+    }
+
+    return true;
+  });
 }
 
 function getById(id) {
   return expenses.find((expense) => expense.id === id);
 }
 
-function create(name) {
-  const expense = { id: uuidv4(), name };
+function create(userId, spentAt, title, amount, category, note) {
+  const expense = {
+    id: generateId(),
+    userId,
+    spentAt,
+    title,
+    amount,
+    category,
+    note,
+  };
 
   expenses.push(expense);
 
@@ -30,14 +72,14 @@ function deleteById(id) {
   return deletedExpense;
 }
 
-function update({ id, name }) {
+function update(id, params) {
   const expensetoUpdate = expenses.find((expense) => expense.id === id);
 
   if (!expensetoUpdate) {
     return;
   }
 
-  return Object.assign(expensetoUpdate, { name });
+  return Object.assign(expensetoUpdate, ...params);
 }
 
 module.exports = {
@@ -46,4 +88,5 @@ module.exports = {
   create,
   deleteById,
   update,
+  clearExpenses,
 };

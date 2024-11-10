@@ -1,17 +1,8 @@
-// const { v4: uuidv4 } = require('uuid');
-
+const { generateId } = require('../utils/generateId');
 const users = [];
-
-let maxId = 100;
 
 function clearUsers() {
   users.length = 0;
-}
-
-function generateId() {
-  maxId++;
-
-  return maxId;
 }
 
 function getAll() {
